@@ -11,12 +11,10 @@ export type CartItem = {
 
 interface CartState {
   items: CartItem[];
-  showCart: boolean;
 }
 
 const initialState: CartState = {
   items: [],
-  showCart: false,
 };
 
 const cart = createSlice({
@@ -24,9 +22,9 @@ const cart = createSlice({
   initialState,
   reducers: {
     addItem(state, { payload, type }: PayloadAction<Product | CartItem>) {
-      const index = state.items.findIndex((item) => item.id === payload.id);
+      const item = state.items.find((item) => item.id === payload.id);
 
-      if (index === -1) {
+      if (!item) {
         state.items.push({
           id: payload.id,
           title: payload.title,
@@ -34,28 +32,24 @@ const cart = createSlice({
           quantity: 1,
           total: payload.price,
         });
-      } else if (index !== -1) {
-        const item = state.items[index];
+      } else if (item) {
         item.total += item.price;
         item.quantity++;
       }
     },
     removeItem(state, { payload, type }: PayloadAction<string>) {
-      const index = state.items.findIndex((item) => item.id === payload);
-      if (index === -1) {
+      const item = state.items.find((item) => item.id === payload);
+      if (!item) {
         return;
       }
-      if (state.items[index].quantity > 1) {
-        state.items[index].quantity--;
+      if (item.quantity > 1) {
+        item.quantity--;
         return;
       }
       state.items = state.items.filter((item) => item.id !== payload);
     },
-    toggleCart(state) {
-      state.showCart = !state.showCart;
-    },
   },
 });
 
-export const { addItem, removeItem, toggleCart } = cart.actions;
+export const { addItem, removeItem } = cart.actions;
 export default cart.reducer;

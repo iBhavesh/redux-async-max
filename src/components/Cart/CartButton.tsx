@@ -1,4 +1,4 @@
-import { toggleCart } from "../../app/features/cart/cart";
+import { toggleCart } from "../../app/features/ui/ui";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import classes from "./CartButton.module.css";
 
