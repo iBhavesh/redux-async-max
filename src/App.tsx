@@ -1,11 +1,13 @@
-import Cart from './components/Cart/Cart';
-import Layout from './components/Layout/Layout';
-import Products from './components/Shop/Products';
+import { useAppSelector } from "./app/hooks";
+import Cart from "./components/Cart/Cart";
+import Layout from "./components/Layout/Layout";
+import Products from "./components/Shop/Products";
 
 function App() {
+  const showCart = useAppSelector((state) => state.cart.showCart);
   return (
     <Layout>
-      <Cart />
+      {showCart && <Cart />}
       <Products />
     </Layout>
   );

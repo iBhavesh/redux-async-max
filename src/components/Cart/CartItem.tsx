@@ -1,11 +1,25 @@
+import {
+  addItem,
+  CartItem as CI,
+  removeItem,
+} from "../../app/features/cart/cart";
+import { useAppDispatch } from "../../app/hooks";
 import classes from "./CartItem.module.css";
-import { cartItem } from "./Cart";
 
 type Props = {
-  item: cartItem;
+  item: CI;
 };
 const CartItem = (props: Props) => {
-  const { title, quantity, total, price } = props.item;
+  const { id, title, quantity, total, price } = props.item;
+  const dispatch = useAppDispatch();
+
+  const removeFromCart = () => {
+    dispatch(removeItem(id));
+  };
+
+  const addToCart = () => {
+    dispatch(addItem(props.item));
+  };
 
   return (
     <li className={classes.item}>
@@ -21,8 +35,8 @@ const CartItem = (props: Props) => {
           x <span>{quantity}</span>
         </div>
         <div className={classes.actions}>
-          <button>-</button>
-          <button>+</button>
+          <button onClick={removeFromCart}>-</button>
+          <button onClick={addToCart}>+</button>
         </div>
       </div>
     </li>
