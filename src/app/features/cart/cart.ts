@@ -50,6 +50,7 @@ const cart = createSlice({
       }
       if (item.quantity > 1) {
         item.quantity--;
+        state.totalQuantity--;
         item.total -= item.price;
         return;
       }
