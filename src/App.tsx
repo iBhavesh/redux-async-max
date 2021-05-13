@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { fetchCartData, sendCartData } from "./app/features/cart/cartActions";
 import { showNotification } from "./app/features/ui/ui";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import Cart from "./components/Cart/Cart";
@@ -15,56 +16,30 @@ function App() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const sendRequest = async () => {
-      dispatch(
-        showNotification({
-          status: "pending",
-          title: "Sending",
-          message: "Sending cart data!",
-        })
-      );
-      const response = await fetch(
-        process.env.REACT_APP_FIREBASE_URL + "cart.json",
-        {
-          method: "PUT",
-          body: JSON.stringify(cart),
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Something went wrong!!");
-      }
-      dispatch(
-        showNotification({
-          status: "success",
-          title: "Uploaded",
-          message: "Uploaded cart successfully!",
-        })
-      );
-    };
+    dispatch(fetchCartData());
+  }, [dispatch]);
 
+  useEffect(() => {
     if (isInitial) {
       isInitial = false;
       return;
     }
+    if (!cart.changed) return;
 
-    sendRequest().catch((error) => {
-      dispatch(
-        showNotification({
-          status: "error",
-          title: "Failed",
-          message: "Oops! Something went wrong. Could not upload cart data.",
-        })
-      );
-    });
+    dispatch(sendCartData(cart));
 
-    timeoutId = setTimeout(() => {
-      dispatch(showNotification(null));
-    }, 2000);
+    return () => {};
+  }, [cart, dispatch]);
 
+  useEffect(() => {
+    if (notification)
+      timeoutId = setTimeout(() => {
+        dispatch(showNotification(null));
+      }, 2000);
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [cart, dispatch]);
+  }, [notification, dispatch]);
 
   const showCart = useAppSelector((state) => state.ui.showCart);
   return (

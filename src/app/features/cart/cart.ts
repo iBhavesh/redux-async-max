@@ -9,14 +9,16 @@ export type CartItem = {
   price: number;
 };
 
-interface CartState {
+export interface CartState {
   items: CartItem[];
   totalQuantity: number;
+  changed?: boolean;
 }
 
 const initialState: CartState = {
   items: [],
   totalQuantity: 0,
+  changed: false,
 };
 
 const cart = createSlice({
@@ -39,6 +41,7 @@ const cart = createSlice({
         item.quantity++;
       }
       state.totalQuantity++;
+      state.changed = true;
     },
     removeItem(state, { payload, type }: PayloadAction<string>) {
       const item = state.items.find((item) => item.id === payload);
@@ -52,9 +55,14 @@ const cart = createSlice({
       }
       state.items = state.items.filter((item) => item.id !== payload);
       state.totalQuantity--;
+      state.changed = true;
+    },
+    replaceCart(state, action: PayloadAction<CartState>) {
+      state.items = action.payload.items;
+      state.totalQuantity = action.payload.totalQuantity;
     },
   },
 });
 
-export const { addItem, removeItem } = cart.actions;
+export const { addItem, removeItem, replaceCart } = cart.actions;
 export default cart.reducer;
